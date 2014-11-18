@@ -2,57 +2,85 @@
 # Tui Popenoe
 # text_editor.py
 
-import Tkinter
+import Tkinter as Tk
 import tkMessageBox
+import tkFileDialog
+
+class TextEditor(Tk.Frame):
+    def __init__(self, parent):
+        Tk.Frame.__init__(self, parent)
+        self.parent = parent
+        self.init_UI()
+
+    def init_UI(self):
+        self.parent.title('Text Editor 1.0')
+        # Create Text Area
+        self.text = Tk.Text(self.parent)
+        # Create root menu bar
+        menu_bar = Tk.Menu(self.parent)
+        # Create the File Menu
+        file_menu = Tk.Menu(menu_bar, tearoff=0)
+        file_menu.add_command(label='Open File', command=self.open_file)
+        file_menu.add_command(label='Save File', command=self.save_file)
+        file_menu.add_separator()
+        file_menu.add_command(label='Exit', command=self.parent.quit)
+        menu_bar.add_cascade(label='File', menu=file_menu)
+        # Create the Edit menu
+        edit_menu = Tk.Menu(menu_bar, tearoff=0)
+        edit_menu.add_command(label='Cut', command=self.cut_text)
+        edit_menu.add_command(label='Copy', command=self.copy_text)
+        edit_menu.add_command(label='Paste', command=self.paste_text)
+        menu_bar.add_cascade(label='Edit', menu=edit_menu)
+        # Create the help menu
+        help_menu = Tk.Menu(menu_bar, tearoff=0)
+        help_menu.add_command(label='About', command=self.display_help)
+        menu_bar.add_cascade(label='Help', menu=help_menu)
+        self.text.pack()
+        self.parent.config(menu=menu_bar)
+
+    def save_file(self):
+        f = tkFileDialog.asksaveasfile(mode='w',
+                                          defaultextension='.txt')
+        if f is None:
+            return
+        file_text = str(self.text.get(1.0, Tk.END))
+        f.write(file_text)
+        f.close()
+
+
+    def open_file(self):
+        ftypes = [('Python files', '*.py'), ('All Files', '*')]
+        dialog = tkFileDialog.Open(self, filetypes=ftypes)
+        fl = dialog.show()
+        if fl != '':
+            file_text = self.read_file(fl)
+            self.text.insert(Tk.END, file_text)
+
+    def read_file(self, filename):
+        with open(filename, 'r') as f:
+            text = f.read()
+            return text
+
+    def cut_text(self):
+        tkMessageBox.showinfo('Cut Text', 'Cut Text')
+
+    def copy_text(self):
+        tkMessageBox.showinfo('Copy Text', 'Copy Text')
+
+    def paste_text(self):
+        tkMessageBox.showinfo('Paste Text', 'Paste Text')
+
+    def display_help(self):
+        tkMessageBox.showinfo('Text Editor 1.0')
+
 
 def main():
     # Create root frame
-    root = Tkinter.Tk()
-    root.title('Text Editor 1.0')
-    # Create Text Area
-    text = Tkinter.Text(root)
-    # Create root menu bar
-    menu_bar = Tkinter.Menu(root)
-    # Create the File Menu
-    file_menu = Tkinter.Menu(menu_bar, tearoff=0)
-    file_menu.add_command(label='Open File', command=open_file)
-    file_menu.add_command(label='Save File', command=save_file)
-    file_menu.add_separator()
-    file_menu.add_command(label='Exit', command=root.quit)
-    menu_bar.add_cascade(label='File', menu=file_menu)
-    # Create the Edit menu
-    edit_menu = Tkinter.Menu(menu_bar, tearoff=0)
-    edit_menu.add_command(label='Cut', command=cut_text)
-    edit_menu.add_command(label='Copy', command=copy_text)
-    edit_menu.add_command(label='Paste', command=paste_text)
-    menu_bar.add_cascade(label='Edit', menu=edit_menu)
-    # Create the help menu
-    help_menu = Tkinter.Menu(menu_bar, tearoff=0)
-    help_menu.add_command(label='About', command=display_help)
-    menu_bar.add_cascade(label='Help', menu=help_menu)
-    # Display the root menu bar
-    root.config(menu=menu_bar)
-    # Display the text area
-    text.pack()
+    root = Tk.Tk()
+    text_editor = TextEditor(root)
+    # Set Editor geometry to main window + buffer on sides
+    root.geometry('1280x720')
     root.mainloop()
-
-def save_file():
-    tkMessageBox.showinfo('Save File', 'Save File')
-
-def open_file():
-    tkMessageBox.showinfo('Open file', 'OpenFile')
-
-def cut_text():
-    tkMessageBox.showinfo('Cut Text', 'Cut Text')
-
-def copy_text():
-    tkMessageBox.showinfo('Copy Text', 'Copy Text')
-
-def paste_text():
-    tkMessageBox.showinfo('Paste Text', 'Paste Text')
-
-def display_help():
-    tkMessageBox.showinfo('Text Editor 1.0')
 
 if __name__ == '__main__':
     main()
