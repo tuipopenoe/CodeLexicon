@@ -4,6 +4,7 @@
 
 import Tkinter as Tk
 from ttk import Style
+import math
 
 class Calculator(Tk.Frame):
     def __init__(self, parent):
@@ -21,8 +22,8 @@ class Calculator(Tk.Frame):
             self.rowconfigure(i, pad=3)
 
         # Create the calculator display
-        display = Tk.Entry(self.parent)
-        display.grid(row=0, column=0, columnspan=5, sticky=Tk.W+Tk.E)
+        self.display = Tk.Entry(self.parent, justify=Tk.RIGHT)
+        self.display.grid(row=0, column=0, columnspan=5, sticky=Tk.W+Tk.E)
         # Create root menu
         menu_bar = Tk.Menu(self.parent)
         # Create the View menu
@@ -99,39 +100,76 @@ class Calculator(Tk.Frame):
     # Non Number functions
     def back(self):
         print('Back')
+        inp = self.display.get()
+        self.clear()
+        self.display.insert(Tk.END, inp[:-1])
 
     def clear(self):
         print('Clear')
+        self.display.delete(0, Tk.END)
 
     def negate(self):
         print('Invert')
+        if self.display.get()[0] == '-':
+            self.display.delete(0,1)
+        else:
+            self.display.insert(0, '-')
+
 
     def sqrt(self):
         print('Square Root')
+        inp = self.display.get()
+        try:
+            inp = math.sqrt(float(inp))
+        except Exception, e:
+            inp = 'Invalid Input'
+        self.clear()
+        self.display.insert(Tk.END, str(inp))
 
     def divide(self):
         print('Divide')
+        self.display.insert(Tk.END, '/')
 
     def mod(self):
         print('Mod')
+        self.display.insert(Tk.END, '%')
 
     def mult(self):
         print('Multiply')
+        self.display.insert(Tk.END, '*')
 
     def invert(self):
         print('Invert')
+        inp = self.display.get()
+        try:
+            inp = float(inp)
+            self.clear()
+            self.display.insert(Tk.END, str(1/inp))
+        except Exception, e:
+            inp = 'Invalid Operand'
+            self.clear()
+            self.display.insert(Tk.END, inp)
 
     def minus(self):
         print('Minus')
+        self.display.insert(Tk.END, '-')
 
     def equals(self):
         print('Equals')
+        try:
+            result = eval(self.display.get())
+        except Exception, e:
+            result = 'Invalid Operation'
+        self.clear()
+        self.display.insert(Tk.END, str(result))
 
     def point(self):
         print('Point')
+        self.display.insert(Tk.END, '.')
 
     def add(self):
         print('Add')
+        self.display.insert(Tk.END, '+')
 
     # Menu Functions
     def standard_view(self):
@@ -155,33 +193,43 @@ class Calculator(Tk.Frame):
     # Button Functions
     def push_seven(self):
         print('Push Seven')
+        self.display.insert(Tk.END, '7')
 
     def push_eight(self):
         print('Push Eight')
+        self.display.insert(Tk.END, '8')
 
     def push_nine(self):
         print('Push Nine')
+        self.display.insert(Tk.END, '9')
 
     def push_four(self):
         print('Push Four')
+        self.display.insert(Tk.END, '4')
 
     def push_five(self):
         print('Push Five')
+        self.display.insert(Tk.END, '5')
 
     def push_six(self):
         print('Push Six')
+        self.display.insert(Tk.END, '6')
 
     def push_one(self):
         print('Push One')
+        self.display.insert(Tk.END, '1')
 
     def push_two(self):
         print('Push Two')
+        self.display.insert(Tk.END, '2')
 
     def push_three(self):
         print('Push Three')
+        self.display.insert(Tk.END, '3')
 
     def push_zero(self):
         print('Push Zero')
+        self.display.insert(Tk.END, '0')
 
 
 def main():
