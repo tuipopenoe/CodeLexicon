@@ -11,6 +11,7 @@ class TextEditor(Tk.Frame):
         Tk.Frame.__init__(self, parent)
         self.parent = parent
         self.init_UI()
+        self.text_buffer = ''
 
     def init_UI(self):
         self.parent.title('Text Editor 1.0')
@@ -65,10 +66,10 @@ class TextEditor(Tk.Frame):
         tkMessageBox.showinfo('Cut Text', 'Cut Text')
 
     def copy_text(self):
-        tkMessageBox.showinfo('Copy Text', 'Copy Text')
+        self.text_buffer = self.text.get("sel.first", "sel.last")
 
     def paste_text(self):
-        tkMessageBox.showinfo('Paste Text', 'Paste Text')
+        self.text.insert("sel.first", self.text_buffer)
 
     def display_help(self):
         tkMessageBox.showinfo('Text Editor 1.0')
