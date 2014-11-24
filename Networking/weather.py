@@ -5,13 +5,15 @@
 import urllib2
 import json
 import Tkinter as Tk
+import datetime
 
 class Weather(Tk.Frame):
     def __init__(self, parent):
         Tk.Frame.__init__(self, parent)
         self.parent = parent
         self.init_UI()
- 
+        self.search.focus()
+
     def init_UI(self):
         self.parent.title("Weather App 1.0")
 
@@ -21,39 +23,41 @@ class Weather(Tk.Frame):
                                        command=self. check_weather)
 
         # Display Elements
-        self.display = Tk.Text(self.parent)
-        self.coordinates = Tk.Label(self.parent)
-        self.country = Tk.Label(self.parent)
-        self.sunrise = Tk.Label(self.parent)
-        self.sunset = Tk.Label(self.parent)
+        self.coordinates = Tk.Label(self.parent, bg='light blue', width=25)
+        self.country = Tk.Label(self.parent, bg='light blue', width=30)
+        self.sunrise = Tk.Label(self.parent, bg='light blue', width=25)
+        self.sunset = Tk.Label(self.parent, bg='light blue', width=25)
         # 5 day forecast
         # Day 1
-        self.weather_one = Tk.Label(self.parent)
-        self.weather_one_desc = Tk.Label(self.parent)
+        self.weather_one = Tk.Label(self.parent, bg='light blue', width=25)
+        self.weather_one_desc = Tk.Label(self.parent, bg='light blue', width=25)
         # Day 2
-        self.weather_two = Tk.Label(self.parent)
-        self.weather_two_desc = Tk.Label(self.parent)
+        self.weather_two = Tk.Label(self.parent, bg='light blue', width=25)
+        self.weather_two_desc = Tk.Label(self.parent, bg='light blue', width=25)
         # Day 3
-        self.weather_three = Tk.Label(self.parent)
-        self.weather_three_desc = Tk.Label(self.parent)
+        self.weather_three = Tk.Label(self.parent, bg='light blue', width=25)
+        self.weather_three_desc = Tk.Label(self.parent, bg='light blue',
+            width=25)
         # Day 4
-        self.weather_four = Tk.Label(self.parent)
-        self.weather_four_desc = Tk.Label(self.parent)
+        self.weather_four = Tk.Label(self.parent, bg='light blue', width=25)
+        self.weather_four_desc = Tk.Label(self.parent, bg='light blue',
+            width=25)
         # Day 5
-        self.weather_five = Tk.Label(self.parent)
-        self.weather_five_desc = Tk.Label(self.parent)
+        self.weather_five = Tk.Label(self.parent, bg='light blue', width=25)
+        self.weather_five_desc = Tk.Label(self.parent, bg='light blue',
+            width=25)
 
         # Temperature and Pressure and Humidity
-        self.temperature = Tk.Label(self.parent)
-        self.pressure = Tk.Label(self.parent)
-        self.humidity = Tk.Label(self.parent)
-        self.temp_min = Tk.Label(self.parent)
-        self.temp_max = Tk.Label(self.parent)
+        self.temperature = Tk.Label(self.parent, bg='light blue', width=25)
+        self.pressure = Tk.Label(self.parent, bg='light blue', width=25)
+        self.humidity = Tk.Label(self.parent, bg='light blue', width=25)
+        self.temp_min = Tk.Label(self.parent, bg='light blue', width=25)
+        self.temp_max = Tk.Label(self.parent, bg='light blue', width=25)
         # Wind
-        self.wind_speed = Tk.Label(self.parent)
-        self.wind_angle = Tk.Label(self.parent)
+        self.wind_speed = Tk.Label(self.parent, bg='light blue', width=25)
+        self.wind_angle = Tk.Label(self.parent, bg='light blue', width=25)
         # 
-        self.cloud_percent = Tk.Label(self.parent)
+        self.cloud_percent = Tk.Label(self.parent, bg='light blue', width=25)
 
         # Assign Element Positions
         self.search.grid(row=0, column=3, columnspan=4)
@@ -94,36 +98,48 @@ class Weather(Tk.Frame):
 
     def check_weather(self):
         data = self.get_weather()
-        self.coordinates['text'] = str(data['coord'])
-        self.country['text'] = data['sys']['country']
-        self.sunrise['text'] = data['sys']['sunrise']
-        self.sunset['text'] = data['sys']['sunset']
+        self.coordinates['text'] ='Coordinates: (' +str(data['coord']['lat']) \
+            + ', ' + str(data['coord']['lon']) + ')'
+        self.country['text'] = 'Country: ' + data['sys']['country']
+        self.sunrise['text'] = 'Sunrise: ' + self.get_formatted_time(
+            data['sys']['sunrise'])
+        self.sunset['text'] = 'Sunset: ' + self.get_formatted_time(
+            data['sys']['sunset'])
 
-        self.weather_one['text'] = data['weather'][0]['main']
-        self.weather_one_desc['text'] = data['weather'][0]['description']
+        if(data['weather'][0]):
+            self.weather_one['text'] = 'Today: ' + data['weather'][0]['main']
+            self.weather_one_desc['text'] = data['weather'][0]['description']
 
-        self.weather_two['text'] = data['weather'][1]['main']
-        self.weather_two_desc['text'] = data['weather'][1]['description']
+        if(len(data['weather']) > 1):
+            self.weather_two['text'] = 'Tomorrow: ' + data['weather'][1]['main']
+            self.weather_two_desc['text'] = data['weather'][1]['description']
 
-        self.weather_three['text'] = data['weather'][2]['main']
-        self.weather_three['text'] = data['weather'][2]['description']
+        if(len(data['weather']) > 2):
+            self.weather_three['text'] = \
+                self.get_day(2) + data['weather'][2]['main']
+            self.weather_three['text'] = data['weather'][2]['description']
 
-        self.weather_four['text'] = data['weather'][3]['main']
-        self.weather_four['text'] = data['weather'][3]['description']
+        if(len(data['weather']) > 3):
+            self.weather_four['text'] = \
+                self.get_day(3) + data['weather'][3]['main']
+            self.weather_four['text'] = data['weather'][3]['description']
 
-        self.weather_five['text'] = data['weather'][4]['main']
-        self.weather_five['text'] = data['weather'][4]['description']
+        if(len(data['weather']) > 4):
+            self.weather_five['text'] = \
+                self.get_day(4) + data['weather'][4]['main']
+            self.weather_five['text'] = data['weather'][4]['description']
 
-        self.temperature['text'] = data['main']['temp']
-        self.pressure['text'] = data['main']['pressure']
-        self.humidity['text'] = data['main']['humidity']
-        self.temp_min['text'] = data['main']['temp_min']
-        self.temp_max['text'] = data['main']['temp_max']
-        self.wind_speed['text'] = data['wind']['speed']
-        self.wind_angle['text'] = calculate_wind_direction(data['wind']['deg'])
-        self.cloud_percent['text'] = data['clouds']['all']
-
-        self.display.insert(Tk.INSERT, str(data))
+        self.temperature['text'] = 'Temperature: ' + str(data['main']['temp'])
+        self.pressure['text'] = 'Pressure: ' + str(data['main']['pressure'])
+        self.humidity['text'] = 'Humidity: ' + str(data['main']['humidity'])
+        self.temp_min['text'] = 'Temperature Minimum: ' + \
+            str(data['main']['temp_min'])
+        self.temp_max['text'] = 'Temperature Maximum: ' + \
+            str(data['main']['temp_max'])
+        self.wind_speed['text'] = 'Wind Speed: ' + str(data['wind']['speed'])
+        self.wind_angle['text'] = 'Wind Direction: ' + \
+            self.calculate_wind_direction(data['wind']['deg'])
+        self.cloud_percent['text'] = 'Clouds: ' + str(data['clouds']['all'])
 
     def calculate_wind_direction(self, angle):
         if angle >= 22.5 and angle < 67.5:
@@ -143,10 +159,17 @@ class Weather(Tk.Frame):
         else:
             return 'North'
 
+    def get_day(self, adjust=0):
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday',
+            'Saturday', 'Sunday']
+        return days[(datetime.datetime.today().weekday() + adjust) % 7]
+
+    def get_formatted_time(self, time):
+        return datetime.datetime.fromtimestamp(time).strftime('%H:%M:%S')
 
     def get_weather(self):
         url = 'http://api.openweathermap.org/data/2.5/weather?q=' + \
-            self.search.get()
+            self.search.get() + '&mode=json&units=metric'
         print(url)
         u = urllib2.urlopen(url)
         data = u.read()
@@ -156,6 +179,7 @@ class Weather(Tk.Frame):
 def main():
     root = Tk.Tk()
     weather = Weather(root)
+    root.configure(background='light blue')
     root.mainloop()
 
 if __name__ == '__main__':
