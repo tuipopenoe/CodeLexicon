@@ -10,9 +10,9 @@ class Calculator(Tk.Frame):
     def __init__(self, parent):
         Tk.Frame.__init__(self, parent)
         self.parent = parent
-        self.init_UI()
+        self.init_ui()
 
-    def init_UI(self):
+    def init_ui(self):
         self.parent.title('Calculator 1.0')
         # Configure Grid layout
         Style().configure('TButton', font='serif 10')
